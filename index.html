@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <title>Book List</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="text-primary text-center"></i> Book List</h1>
+      <form id="book-form" class="mt-2">
+        <div class="form-group mt-3">
+          <label for="bookname">Title</label>
+          <input type="text" class="form-control" id="bookname">
+        </div>
+        <div class="form-group mt-3">
+          <label for="author">Author</label>
+          <input type="text" class="form-control" id="author">
+        </div>
+        <div class="form-group mt-3">
+          <label for="bookid">BookID</label>
+          <input type="text" class="form-control" id="bookid" readonly>
+        </div>
+        <input type="submit" class="btn btn-primary  mt-5">
+      </form>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Book name</th>
+            <th scope="col">Author</th>
+            <th scope="col">BookID</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="book-list">
+
+        </tbody>
+      </table>
+    </div>
+  </body>
+  <script src="main.js"></script>
+</html>
