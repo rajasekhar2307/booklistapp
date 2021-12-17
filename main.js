@@ -1,3 +1,8 @@
+let selectedRow = null;
+
+const map = new Map();
+let count = 0;
+
 class Book {
   constructor(bookname, author, bookid) {
     this.bookname = bookname;
@@ -20,7 +25,14 @@ class UI {
     }
   }
 
+  static clearForm() {
+    document.querySelector("#bookname").value = "";
+    document.querySelector("#author").value = "";
+    document.querySelector("#bookid").value = "";
+  }
+
   static editBook(el) {
+    selectedRow = el.parentElement.parentElement;
     const bookid =
       el.parentElement.previousElementSibling.previousElementSibling
         .textContent;
@@ -35,6 +47,12 @@ class UI {
         document.querySelector("#bookid").value = bookid;
       }
     });
+  }
+
+  static editRow(row, bookname, author, bookid) {
+    row.cells[0].innerHTML = bookname;
+    row.cells[1].innerHTML = author;
+    row.cells[2].innerHTML = bookid;
   }
 
   static addBookToList(book) {
@@ -96,12 +114,14 @@ class Store {
   }
 
   static removeBook(bookid) {
+    count--;
     const books = Store.getBooks();
     books.forEach((book, index) => {
       if (book.bookid == bookid) {
         books.splice(index, 1);
       }
     });
+    map.delete(bookid);
     localStorage.setItem("books", JSON.stringify(books));
   }
 }
@@ -117,6 +137,13 @@ document.querySelector("#book-form").addEventListener("submit", (e) => {
 
   if (bookid == "") {
     bookid = Math.floor(Math.random() * 100 + 1);
+    while (map.get(bookid) != undefined && count < 100) {
+      bookid = Math.floor(Math.random() * 100 + 1);
+    }
+    if (count == 100) {
+      UI.displayAlert("Max Storage reached", "danger");
+      return;
+    }
   }
 
   if (bookname == "" || author === "" || bookid === "") {
@@ -127,33 +154,37 @@ document.querySelector("#book-form").addEventListener("submit", (e) => {
     books.forEach((book) => {
       if (book.bookid == bookid) {
         Store.editBook(bookid, bookname, author);
-        UI.displayBooks();
+        UI.editRow(selectedRow, bookname, author, bookid);
         UI.displayAlert("Book edited", "success");
+        UI.clearForm();
         flag = 1;
       }
     });
     if (flag === 0) {
       const book = new Book(bookname, author, bookid);
+      console.log(count);
 
       Store.addBook(book);
+      map.set(bookid, 1);
+      count++;
 
       UI.addBookToList(book);
 
       UI.displayAlert("Book added", "success");
+
+      UI.clearForm();
     }
   }
 });
 
 document.querySelector("#book-list").addEventListener("click", (e) => {
   if (e.target.classList.contains("delete")) {
-    console.log("clicked delete");
     UI.removeBook(e.target);
 
     Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
 
     UI.displayAlert("Book removed", "success");
   } else if (e.target.classList.contains("edit")) {
-    console.log("Clicked edit");
     UI.editBook(e.target);
   }
 });
